@@ -1,2 +1,2 @@
 Trang chủ:
-![Screenshot_2](https://drive.google.com/drive/my-drive?hl=vi&q=type:image%20parent:0AJbYg7aypUzSUk9PVA%20after:2025-10-20)
+![Screenshot_2](https://drive.google.com/file/d/1TpjdRBNLmh2LKy-telT_tO8rthhexS5Y/view?usp=drive_link)
