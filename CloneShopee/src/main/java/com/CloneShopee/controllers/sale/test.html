@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Realtime Database</title>
+</head>
+<body> 
+    <h1>Dữ liệu từ Firebase Realtime Database</h1>
+    <pre id="output">Đang tải...</pre> 
+    <script type="module"> 
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+ 
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIlS73VtCXebhIo9180ssSvrqExiCLrs8",
+            authDomain: "realtimetracking-bfd0c.firebaseapp.com",
+            databaseURL: "https://realtimetracking-bfd0c-default-rtdb.firebaseio.com",
+            projectId: "realtimetracking-bfd0c",
+            storageBucket: "realtimetracking-bfd0c.firebasestorage.app",
+            messagingSenderId: "194204604598",
+            appId: "1:194204604598:web:6622e0c84dd59c5691ae17",
+            measurementId: "G-WV9T0J2ECT"
+        };
+ 
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+ 
+        const dataRef = ref(database, "shiping/User1");  
+        onValue(dataRef, (snapshot) => {
+            const data = snapshot.val();
+            alert("Hello wiordl")
+            document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+        });
+    </script>
+
+</body>
+</html>
