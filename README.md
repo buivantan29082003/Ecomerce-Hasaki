@@ -1,2 +1,2 @@
 Trang chủ:
-![Screenshot_2](https://drive.google.com/file/d/1TpjdRBNLmh2LKy-telT_tO8rthhexS5Y/view?usp=drive_link)
+![alt](https://github.com/buivantan29082003/Ecomerce-Hasaki/blob/aba9ae7ea86ae4e5b44c28560dbc2ffa8ed4c55b/home.png)
