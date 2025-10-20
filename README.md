@@ -1,2 +1,2 @@
 Trang chủ:
-![alt][Uploading image.png…]()
+![alt text][Uploading image.png…]()
