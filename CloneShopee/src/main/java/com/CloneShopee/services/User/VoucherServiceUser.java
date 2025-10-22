@@ -40,6 +40,9 @@ public class VoucherServiceUser {
                 v.setIsHaveSlot(
                         v.getQuantityPer() > quantityUsed ? v.getLimitUsage() > v.getQuantityUsed() ? 1 : 0 : 0);
                 v.setCanApply(v.getIsHaveSlot() != 0 ? true : false);
+                if (v.getIsHaveSlot() == 0) {
+                    v.setMessage("Không còn lượt sử dụng");
+                }
                 if (v.getCanApply()) {
                     caculateDiscountFee(sumaryProduct, v);
                 }

@@ -14,9 +14,7 @@ export default function UserHome() {
   useEffect(() => {
     getAllCategoriesWithNotChild().then((v) => {
       setCategories(v);
-    }).catch(error=>{
-      setCategories([])
-    })
+    }) 
   }, []);
 
   return (

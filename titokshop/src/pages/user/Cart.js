@@ -6,12 +6,32 @@ import { getAllCart } from "../../Service/api/Cart";
 import ProductCard from "../../components/user/ProductCartLine";
 import { getRecommendByCategoryIds } from "../../Service/api/ProductCommon";
 import Carts from "./CartForm";
+import { useNavigate } from "react-router-dom";
 const Cart = () => {
   const [carts, setCarts] = useState(null);
   const [sumary, setSumary] = useState({
     totalSelected: 0,
     amount: 0,
   });
+
+  const navigate=useNavigate();
+
+  const order = () => {
+var items = ""
+carts.forEach(cart => {
+  cart.items.forEach(item => {
+    if (item.isChecked) {
+      items += `${item.variantId},`
+    }
+  })
+})
+if (items !== "") {
+  navigate("/user/order/" + items.slice(0, -1))
+}
+}
+
+
+
   const sumTotal = () => {
     let amount = 0;
     carts.forEach((v) => {
@@ -62,7 +82,7 @@ const Cart = () => {
         <div className="flex gap-3 items-center">
           <p>Tổng cộng 3 sản phẩm</p>
           <p className="text-3xl text-[#306e51]">{formatVND(sumary.amount)}</p>
-          <button className="text-white text-lg bg-[#306e51] py-2 px-5 rounded-sm">
+          <button onClick={order} className="text-white text-lg bg-[#306e51] py-2 px-5 rounded-sm">
             Mua hàng
           </button>
         </div>

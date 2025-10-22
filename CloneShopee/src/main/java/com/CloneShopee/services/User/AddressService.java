@@ -22,6 +22,10 @@ public class AddressService {
         return addressRepo.getAddressByAccountId(shopBean.getAccount().getId());
     }
 
+    public Address getAddressByAccountIdAndAddressId(Integer accountId, Integer addressId) {
+        return addressRepo.getAddressByIdAndAccountId(addressId, accountId);
+    }
+
     public Integer addAddress(Address address) {
         try {
             addressRepo.save(address);

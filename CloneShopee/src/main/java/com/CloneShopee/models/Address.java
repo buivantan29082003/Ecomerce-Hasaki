@@ -1,7 +1,11 @@
 package com.CloneShopee.models;
 
 import org.hibernate.validator.constraints.Length;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,12 +35,14 @@ public class Address {
     private Integer wardCode;
     private String fullAddress;
     private String addressNote;
-    @ManyToOne
-    @JoinColumn(name = "accountId") // khóa ngoại trỏ đến bảng account
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accountId")
+    @JsonIgnore
     private Account account;
 
-    @ManyToOne
-    @JoinColumn(name = "shopId") // khóa ngoại trỏ đến bảng shop
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shopId")
+    @JsonIgnore
     private Shop shop;
 
     public Integer getId() {

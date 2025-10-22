@@ -7,6 +7,9 @@ import line_order from "../../assets/image/line_order.png";
 import CustomModal from "../../components/Base/Modal";
 import { getAllAddress } from "../../Service/api/DiaChi";
 import CustomCheckbox from "../../components/Base/CheckboxCustome";
+import { placeAnOrder } from "../../Service/api/OrderServiceUser";
+import { toast } from "react-toastify";
+import handleError from "../../Service/api/HandlError";
 const Order = ({ isLive = false }) => {
   const param = useParams();
   const navigate = useNavigate();
@@ -16,7 +19,7 @@ const Order = ({ isLive = false }) => {
     totalPrice: 0,
   });
 
-  const [address,setAddress]=useState(null)
+  const [address, setAddress] = useState(null);
   const sumTotal = () => {
     if (carts !== null) {
       var totalReduce = 0;
@@ -55,6 +58,35 @@ const Order = ({ isLive = false }) => {
     }
   }, []);
 
+  const order = () => {
+    const data = {
+      cartItems: [],
+      shops: [],
+      address: null,
+    };
+    if (address !== null) {
+      data.addressId = address.id;
+      carts.forEach((v) => {
+        let shop = { shopId: v.shopId };
+        if (v.voucher != null) {
+          shop.voucherId = v.voucher.voucherId;
+          shop.voucherStyle = v.voucher.voucherStyle;
+        }
+        data.shops.push(shop);
+        v.items.forEach((item) => {
+          data.cartItems.push(item.variantId);
+        });
+      });
+    }
+    placeAnOrder(data)
+      .then((v) => {
+        toast.success("Đặt hàng thành công");
+      })
+      .catch((error) => {
+        toast.error(handleError(error).message);
+      });
+  };
+
   return (
     <>
       <div className="w-full  bg-gray-50">
@@ -63,7 +95,7 @@ const Order = ({ isLive = false }) => {
           <p className="text-3xl text-green-700">|</p>
           <p className="text-lg text-green-700">THANH TOÁN</p>
         </div>
-        <AddressSelected address={address} setAddress={setAddress}/>
+        <AddressSelected address={address} setAddress={setAddress} />
 
         <div className="md:w-10/12 w-full md:px-10 mt-2 mx-auto   ">
           <OrderForm isLive={isLive} setSumTotal={sumTotal} carts={carts} />
@@ -72,16 +104,15 @@ const Order = ({ isLive = false }) => {
           className="sticky mt-2 bottom-0 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] 
      mb-2 w-full md:w-10/12 mx-auto md:px-14 px-3 py-5 flex justify-between gap-3 items-center"
         >
-          <div className="flex gap-4">
-            <div className="flex gap-2">
-              <p>Chọn tất cả (2)</p>
-            </div>
-            <p>Xóa tất cả</p>
-          </div>
+          <div className=" "></div>
           <div className="flex gap-3 items-center">
             <p>Tổng cộng 3 sản phẩm</p>
-            {/* <p className="text-3xl text-[#306e51]">{formatVND(sumary.amount)}</p> */}
-            <button className="text-white text-lg bg-[#306e51] py-2 px-5 rounded-sm">
+            <button
+              onClick={() => {
+                order();
+              }}
+              className="text-white text-lg bg-[#306e51] py-2 px-5 rounded-sm"
+            >
               ĐẶT HÀNG
             </button>
           </div>
@@ -92,14 +123,13 @@ const Order = ({ isLive = false }) => {
   );
 };
 
-const AddressSelected = ({address,setAddress}) => {
-   
+const AddressSelected = ({ address, setAddress }) => {
   const [addresses, setAddresses] = useState([]);
   useEffect(() => {
     getAllAddress().then((v) => {
       setAddresses(v);
-      if(v.length>0){
-        setAddress(v[0])
+      if (v.length > 0) {
+        setAddress(v[0]);
       }
     });
   }, []);
@@ -124,11 +154,15 @@ const AddressSelected = ({address,setAddress}) => {
 
         {/* Thông tin địa chỉ */}
         <div className="flex flex-wrap items-center justify-between text-gray-800">
-          {address!==null?<div className="flex flex-wrap items-center gap-x-2">
-            <span className="font-semibold">{address.fullName} |</span>
-            <span className="font-semibold">{address.phoneNumber}</span>
-            <span>{address.fullAddress}</span> 
-          </div>:<p className="text-gray-600">Bạn chưa chọn địa chỉ</p>}
+          {address !== null ? (
+            <div className="flex flex-wrap items-center gap-x-2">
+              <span className="font-semibold">{address.fullName} |</span>
+              <span className="font-semibold">{address.phoneNumber}</span>
+              <span>{address.fullAddress}</span>
+            </div>
+          ) : (
+            <p className="text-gray-600">Bạn chưa chọn địa chỉ</p>
+          )}
 
           <CustomModal
             witdh={40}
@@ -179,9 +213,13 @@ const AddressSelected = ({address,setAddress}) => {
                           </div>
 
                           <div className="flex flex-col items-end gap-2">
-                            <CustomCheckbox color="green-700" onChange={()=>{
-                              setAddress(addr)
-                            }} checked={addr.id===address.id}/>
+                            <CustomCheckbox
+                              color="green-700"
+                              onChange={() => {
+                                setAddress(addr);
+                              }}
+                              checked={addr.id === address.id}
+                            />
                           </div>
                         </div>
                       </div>
@@ -201,6 +239,5 @@ const AddressSelected = ({address,setAddress}) => {
     </div>
   );
 };
-  
 
 export default Order;

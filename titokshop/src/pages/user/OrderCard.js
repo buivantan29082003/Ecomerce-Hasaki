@@ -8,6 +8,8 @@ import Popup from "../../components/Base/Popup";
 import { toast } from "react-toastify";
 import handleError from "../../Service/api/HandlError";
 import { formatVND } from "../../Service/FormatDate";
+import PopupV2 from "../../components/Base/PopupVer2";
+import CustomModal from "../../components/Base/Modal";
 
 const ShopGroupOrder = ({ shop, sIndex, sumTotal, isLive }) => {
   const [vouchers, setVouchers] = useState([]);
@@ -120,9 +122,13 @@ const ShopGroupOrder = ({ shop, sIndex, sumTotal, isLive }) => {
               <p>Voucher của shop</p>
             </div>
             <div className="text-right cursor-pointer w-5/12">
-              <Popup
-                content={
+              <CustomModal
+                witdh={30}
+                height={70}
+                trigger={<p className="text-md text-green-700">Chọn</p>}
+                children={
                   <ContentVoucherCard
+                    shop={shop}
                     applyVoucher={applyVoucher}
                     getVoucher={getVoucher}
                     isLive={isLive}
@@ -156,6 +162,10 @@ const ShopGroupOrder = ({ shop, sIndex, sumTotal, isLive }) => {
                   (shop.voucher != null ? shop.voucher.priceExpectReduce : 0)
               )}
             </p>
+            <p className="text-right">Tiền giảm voucher</p>
+            <p className="text-right text-lg text-orange-600 font-semibold">
+               {shop.voucher===undefined?"0đ":formatVND(shop.voucher.priceExpectReduce)}
+            </p>
           </div>
         </div>
       </div>
@@ -169,10 +179,11 @@ const ContentVoucherCard = ({
   sumTotal,
   getVoucher,
   applyVoucher,
+  shop,
 }) => {
   return (
     <>
-      <div className="flex flex-wrap py-3">
+      <div className="flex flex-wrap py-3 gap-2">
         {vouchers.map((v) => {
           return (
             <VoucherCards
@@ -181,6 +192,7 @@ const ContentVoucherCard = ({
               sumTotal={sumTotal}
               isLive={isLive}
               item={v}
+              shop={shop}
             />
           );
         })}
@@ -192,10 +204,17 @@ const ContentVoucherCard = ({
   );
 };
 
-const VoucherCards = ({ item, isLive, sumTotal, getVoucher, applyVoucher }) => {
+const VoucherCards = ({
+  item,
+  isLive,
+  sumTotal,
+  getVoucher,
+  applyVoucher,
+  shop,
+}) => {
   return (
-    <>
-      <div className="flex items-center justify-between bg-white border rounded-lg shadow-sm p-3 w-full max-w-lg">
+    <div className=" border rounded-lg p-2 w-full">
+      <div className="flex items-center justify-between bg-white gap-2   p-3  max-w-lg">
         {/* Logo */}
         <div className="flex items-center gap-3">
           <img
@@ -216,25 +235,25 @@ const VoucherCards = ({ item, isLive, sumTotal, getVoucher, applyVoucher }) => {
               Hình thức áp dụng {item.voucherStyle}
             </p>
             <p className="text-gray-500 text-xs mt-1">HSD: {item.endDate} </p>
+            <p className="text-red-800 text-xs mt-1">HSD: {item.message} </p>
           </div>
         </div>
 
-        {/* Apply button  */}
-        {item.isGain === 1 && item.canApply === true ? (
+        {item.canApply === true ? (
+          shop.voucher != null ? (
+            shop.voucher.voucherId === item.voucherId ? (
+              <button  className="text-white text-sm bg-red-600 py-1 px-2 rounded-sm" onClick={() => {
+                applyVoucher(undefined)
+              }}>Bỏ chọn</button>
+            ) : (
+              <button  className="text-white text-sm bg-[#306e51] py-1 px-2 rounded-sm" onClick={() => applyVoucher(item)}>Apply</button>
+            )
+          ) : (
+            <button  className="text-white text-sm bg-[#306e51] py-1 px-2 rounded-sm" onClick={() => applyVoucher(item)}>Apply</button>
+          )
+        ) : item.isGain === 0 ? (
           <button
-            className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-3 py-1.5 rounded"
-            onClick={() => {
-              applyVoucher(item);
-            }}
-          >
-            Apply
-          </button>
-        ) : (
-          `${item.message}`
-        )}
-        {item.isGain === 0 ? (
-          <button
-            className="bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-3 py-1.5 rounded"
+            className="text-white text-sm bg-[#306e51] py-1 px-2 rounded-sm"
             onClick={() => {
               if (item.voucherStyle === "COMMON") {
                 claimVoucherCommon(item.voucherId)
@@ -248,10 +267,10 @@ const VoucherCards = ({ item, isLive, sumTotal, getVoucher, applyVoucher }) => {
               }
             }}
           >
-            Lấy voucher
+            Nhận
           </button>
         ) : (
-          ""
+          <></>
         )}
       </div>
       {item.voucherStyle === "LIVE" && isLive === false ? (
@@ -261,7 +280,7 @@ const VoucherCards = ({ item, isLive, sumTotal, getVoucher, applyVoucher }) => {
       ) : (
         ""
       )}
-    </>
+    </div>
   );
 };
 

@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import { CgShoppingCart } from "react-icons/cg";
 import { formatVND } from "../../Service/FormatDate";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function CartPopup({ carts }) {
   const [isHovering, setIsHovering] = useState(false);
-    const navigate=useNavigate()
   const handleMouseLeave = (e) => {
     const related = e.relatedTarget;
     const icon = document.getElementById("cart-icon");
@@ -15,7 +14,6 @@ export default function CartPopup({ carts }) {
     }
   };
 
-  // 🧩 Giới hạn hiển thị tối đa 4 sản phẩm
   const visibleCarts = carts.slice(0, 4);
   const hiddenCount = carts.length - visibleCarts.length;
 
@@ -95,7 +93,7 @@ export default function CartPopup({ carts }) {
                     </p>
                   </div>
                   <p className="text-sm text-orange-500 font-medium whitespace-nowrap">
-                    {formatVND(item.price*item.quantity)}
+                    {formatVND(item.price * item.quantity)}
                   </p>
                 </div>
               ))}
@@ -108,11 +106,12 @@ export default function CartPopup({ carts }) {
                   ? `+${hiddenCount} Thêm Hàng Vào Giỏ`
                   : `${carts.length} Thêm Hàng Vào Giỏ`}
               </p>
-              <button onClick={()=>{
-                navigate("/user/cart")
-              }} className="bg-orange-500 text-white text-sm px-4 py-1 rounded hover:bg-orange-600 transition">
+              <Link
+                to={"/user/cart"}
+                className="bg-orange-500 text-white text-sm px-4 py-1 rounded hover:bg-orange-600 transition"
+              >
                 Xem Giỏ Hàng
-              </button>
+              </Link>
             </div>
           </div>
         )}

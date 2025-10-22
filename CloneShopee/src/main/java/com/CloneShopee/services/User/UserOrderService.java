@@ -66,6 +66,9 @@ public class UserOrderService {
 
     public void proccessOrder(ShopItemDTO shopItem, List<OrderItemDTO> items, Map<Integer, PromotionItem> promotions,
             List<Order> orders, Status status, List<OrderItem> orderItems) {
+        if (items == null) {
+            throw new RuntimeException("Thông tin sản phẩm và của hàng không khớp");
+        }
         processOrder(shopItem.getVoucherId(), shopItem, items, promotions, orders, status, orderItems);
     }
 
@@ -78,7 +81,6 @@ public class UserOrderService {
         // OrderItem orderItem;
         Double totalAmmount = 0.0;
         PromotionItem promotionItem;
-        // lặp để tính toán : Khuyến mãi, giá cả
         for (OrderItemDTO item : items) {
             promotionItem = promotions.get(item.getProductVariantId());
             if (promotionItem != null) {
@@ -129,6 +131,7 @@ public class UserOrderService {
                         }
                         Integer isUpdated = updateOrderQuantityUsed(voucherId, shopBean.getAccount().getId(),
                                 voucherShop.getQuantityPer());
+                        System.out.println("------ CON SỐ LÀ ------" + isUpdated);
                         if (isUpdated != 2) {
                             throw new RuntimeException(
                                     "Áp dụng voucher id: " + voucherId + " không thành công, vui lòng loại bỏ đi");

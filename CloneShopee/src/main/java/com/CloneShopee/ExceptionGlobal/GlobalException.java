@@ -30,9 +30,8 @@ public class GlobalException {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleValidationExceptions(Exception ex) {
+    public ResponseEntity<Object> handleValidationExceptions(Exception ex) {
 
-        StringBuilder errorMessage = new StringBuilder();
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new BaseRespone(null, ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 }
