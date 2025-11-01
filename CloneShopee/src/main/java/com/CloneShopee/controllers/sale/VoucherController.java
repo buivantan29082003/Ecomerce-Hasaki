@@ -7,14 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.CloneShopee.Bean.ShopBean;
 import com.CloneShopee.DTO.Sale.Voucher.VoucherInsert;
-import com.CloneShopee.DTO.Sale.Voucher.VoucherUpdate;
 import com.CloneShopee.ResponeEntity.BaseRespone;
 import com.CloneShopee.ResponeEntity.PageList;
 import com.CloneShopee.models.VoucherBuyBack;
@@ -61,41 +58,6 @@ public class VoucherController {
         voucherService.saveVoucher(voucher.getVoucher(), shopbean.getShop(), voucher.getProductIds());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    // @Transactional
-    // @PostMapping("sale/voucher/add/newcustomer")
-    // public ResponseEntity<Object> addVoucherNewCusytomer(
-    // @RequestBody @Valid VoucherInsert<VoucherNewCustomer> voucher) {
-    // voucher.getVoucher().setVoucherStyle("newcustomer");
-    // voucherService.checkVoucherCode(voucher.getVoucher().getVoucherCode());
-    // voucherService.checkProductOfShop(voucher.getProductIds(),
-    // shopbean.getShop().getId());
-    // voucherService.checkTimeVoucher(voucher.getVoucher().getStartDate(),
-    // voucher.getVoucher().getEndDate());
-    // voucherService.checkvalueDisCount(voucher.getVoucher().getVoucherType(),
-    // voucher.getVoucher().getDiscountValue());
-    // voucherService.saveVoucher(voucher.getVoucher(), shopbean.getShop(),
-    // voucher.getProductIds());
-    // return new ResponseEntity<>(HttpStatus.OK);
-    // }
-
-    // @Transactional
-    // @PostMapping("sale/voucher/add/follower")
-    // public ResponseEntity<Object> addVoucherFolower(@RequestBody @Valid
-    // VoucherInsert<VoucherFolower> voucher) {
-    // voucher.getVoucher().setVoucherStyle("follower");
-    // voucherService.checkVoucherCode(voucher.getVoucher().getVoucherCode());
-    // voucherService.checkProductOfShop(voucher.getProductIds(),
-    // shopbean.getShop().getId());
-    // voucherService.checkTimeVoucher(voucher.getVoucher().getStartDate(),
-    // voucher.getVoucher().getEndDate());
-    // voucherService.checkvalueDisCount(voucher.getVoucher().getVoucherType(),
-    // voucher.getVoucher().getDiscountValue());
-
-    // voucherService.saveVoucher(voucher.getVoucher(), shopbean.getShop(),
-    // voucher.getProductIds());
-    // return new ResponseEntity<>(HttpStatus.OK);
-    // }
 
     @Transactional
     @PostMapping("sale/voucher/add/buyback")
@@ -144,15 +106,19 @@ public class VoucherController {
     // return new ResponseEntity<>("Update successfully!!!", HttpStatus.OK);
     // }
 
+    @Transactional
+    @PostMapping("/sale/voucher/status/update")
     public ResponseEntity<Object> updateStatusVoucher(
             @RequestParam(name = "voucherId", defaultValue = "-1") Integer voucherd,
             @RequestParam(name = "statusCode", defaultValue = "1") Integer statusCode) {
-        voucherService.checkVoucherOfShop(voucherd, shopbean.getShop().getId());
-        if (statusCode > -1 && statusCode < 2) {
-            updateStatusVoucher(voucherd, statusCode);
-            return new ResponseEntity<>("change status successfully", HttpStatus.OK);
+        if (!voucherService.checkVoucherOfShop(voucherd, shopbean.getShop().getId()) == true) {
+            return new ResponseEntity<>(new BaseRespone(null, "Voucher không thuộc cửa hàng"), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("StatusCode is not valid", HttpStatus.BAD_REQUEST);
+        if (statusCode > -1 && statusCode < 2) {
+            voucherService.UpdateStatusVoucher(voucherd, statusCode);
+            return new ResponseEntity<>(new BaseRespone(null, "change status successfully"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new BaseRespone(null, "StatusCode is not valid"), HttpStatus.BAD_REQUEST);
     }
 
 }

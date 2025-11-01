@@ -5,6 +5,8 @@ import store from "../config/redux/User/Store";
 import DashBoard from "../pages/user/dashboard";
 import UserAddress from "../pages/user/UserAddress";
 import AddAddressForm from "../pages/user/AddAddress";
+import ManageOrder from "../pages/user/ManageOrder";
+import ProductReport from "../pages/seller/ProductReport";
   
 // ✅ Lazy load toàn bộ page & layout
 const Loading = lazy(() => import("../pages/Base/Loading"));
@@ -62,6 +64,7 @@ export default function AppMain() {
             <Route path="voucher/overal" element={<OveralVoucher />} />
             <Route path="discount/overal" element={<OveralDiscount />} />
             <Route path="discount/add/:type" element={<MainDiscount />} />
+            <Route path="product/report/:productId" element={<ProductReport />} />
           </Route>
 
           {/* User routes */}
@@ -74,7 +77,7 @@ export default function AppMain() {
             <Route index element={<div>Dashboard Home</div>} />    {/* /user/dashboard */}
             <Route path="address" element={<UserAddress />} />  
             <Route path="address/add" element={<AddAddressForm />} /> 
-                   
+            <Route path="order" element={<ManageOrder />}></Route> 
           </Route>
         </Route>
 

@@ -12,6 +12,7 @@ public class VoucherInfo {
     private Integer totalProduct;
     private String voucherType;
     private String voucherStyle;
+    private Boolean isEnded;
 
     public VoucherInfo(Integer id, String voucherName, String voucherCode, LocalDateTime startDate,
             LocalDateTime endDate, Integer isActive, Integer totalProduct, String voucherType, String voucherStyle) {
@@ -24,6 +25,15 @@ public class VoucherInfo {
         this.totalProduct = totalProduct;
         this.voucherType = voucherType;
         this.voucherStyle = voucherStyle;
+        this.isEnded = LocalDateTime.now().isAfter(endDate);
+    }
+
+    public Boolean getIsEnded() {
+        return isEnded;
+    }
+
+    public void setIsEnded(Boolean isEnded) {
+        this.isEnded = isEnded;
     }
 
     public VoucherInfo() {

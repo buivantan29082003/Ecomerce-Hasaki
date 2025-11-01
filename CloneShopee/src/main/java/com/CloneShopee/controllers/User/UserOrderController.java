@@ -6,16 +6,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.CloneShopee.Bean.ShopBean;
 import com.CloneShopee.DTO.User.OrderInsertDTO;
 import com.CloneShopee.DTO.User.OrderItemDTO;
 import com.CloneShopee.ResponeEntity.BaseRespone;
+import com.CloneShopee.ResponeEntity.PageList;
 import com.CloneShopee.models.Address;
 import com.CloneShopee.models.Order;
 import com.CloneShopee.models.OrderItem;
@@ -41,6 +47,22 @@ public class UserOrderController {
 
     @Autowired
     ProductServiceUser productServiceUser;
+
+    @GetMapping("/user/order/search")
+    public ResponseEntity<Object> getOrder(@RequestParam(value = "key", required = false) String key,
+            @RequestParam(value = "keyType", required = false) String typeKey,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "status", defaultValue = "-1", required = false) Integer statusId) {
+        Sort sort = Sort.by("id").descending();
+        if (sortBy != null && sortBy.equals("total")) {
+            sort = Sort.by("totalAmmount").descending();
+        }
+        Pageable pageable = PageRequest.of(page != null && page > -1 ? page : 0, 5, sort);
+
+        PageList p = orderService.searchOrder(key, typeKey, pageable, statusId);
+        return new ResponseEntity<>(new BaseRespone(p, "success"), HttpStatus.OK);
+    }
 
     @Transactional
     @PostMapping("user/order/add")

@@ -17,9 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.AbstractPageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -106,11 +104,11 @@ public class ProductController {
 	}
 
 	@Transactional
-	@PutMapping("/sale/product/update/status")
+	@PostMapping("/sale/product/update/status")
 	public ResponseEntity<Object> updateStatusProduct(@RequestParam("status") String status,
 			@RequestParam("productId") Integer productId) {
-		productService.updateStatusProduct(status, productId, 1);
-		return new ResponseEntity<Object>("Update product success", HttpStatus.OK);
+		productService.updateStatusProduct(status, productId, shopBean.getShop().getId());
+		return new ResponseEntity<Object>(new BaseRespone(null, "success"), HttpStatus.OK);
 	}
 
 	@Transactional

@@ -8,8 +8,7 @@ import Popup from "../../components/Base/Popup";
 import { toast } from "react-toastify";
 import handleError from "../../Service/api/HandlError";
 import { formatVND } from "../../Service/FormatDate";
-import PopupV2 from "../../components/Base/PopupVer2";
-import CustomModal from "../../components/Base/Modal";
+ import CustomModal from "../../components/Base/Modal";
 
 const ShopGroupOrder = ({ shop, sIndex, sumTotal, isLive }) => {
   const [vouchers, setVouchers] = useState([]);
@@ -147,11 +146,11 @@ const ShopGroupOrder = ({ shop, sIndex, sumTotal, isLive }) => {
             <p>Lời nhắn</p>{" "}
             <input
               onChange={(e) => {
-                shop.message = e.target.value;
+                shop.note = e.target.value;
                 setReload(reload + 1);
               }}
               className="p-1 px-6 rounded-sm border border-gray-300"
-              value={shop.message}
+              value={shop.note}
             />
           </div>
           <div className="md:w-6/12 w-full ">

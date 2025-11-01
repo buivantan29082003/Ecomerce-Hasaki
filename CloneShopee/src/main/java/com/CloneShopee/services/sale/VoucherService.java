@@ -59,7 +59,7 @@ public class VoucherService {
         }
         Pageable p = PageRequest.of(page == null ? 0 : page - 1, 5, Sort.by("id"));
         return voucherRepo.findAllParentOnly(key == null ? "%%" : "%" + key + "%", status == 0 ? null : status, p,
-                l);
+                l, shopBean.getShop().getId());
     }
 
     public Object getOveralVoucher(Integer beforeDate) {
@@ -70,10 +70,14 @@ public class VoucherService {
         return voucherRepo.getVoucherOfShopAndAccountReciveAndStarting(shopId, accountId);
     }
 
-    public void checkVoucherOfShop(Integer id, Integer shop) {
+    public Boolean checkVoucherOfShop(Integer id, Integer shop) {
+        System.out.println("---------------------------------");
+        System.out.println(voucherRepo.getVoucherByIdAndShopId(id, shop));
+        System.out.println("----------------------------------");
         if (voucherRepo.getVoucherByIdAndShopId(id, shop).orElse(-1) == -1) {
-            throw new ConstraintException("id", "Voucher update không hợp lệ !!!");
+            return false;
         }
+        return true;
     }
 
     public void saveVoucher(VoucherShop voucher, Shop shop, Set<Integer> productIds) {
@@ -90,6 +94,7 @@ public class VoucherService {
     }
 
     public void UpdateStatusVoucher(Integer voucherId, Integer isActive) {
+        System.out.println(voucherId);
         voucherRepo.updateStatusVoucherByVoucherId(voucherId, isActive);
     }
 

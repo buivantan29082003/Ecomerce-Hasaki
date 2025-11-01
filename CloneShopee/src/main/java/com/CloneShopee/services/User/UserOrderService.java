@@ -1,35 +1,33 @@
 package com.CloneShopee.services.User;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.hibernate.boot.beanvalidation.IntegrationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import com.CloneShopee.Bean.ShopBean;
+import com.CloneShopee.DTO.User.OrderInfo;
 import com.CloneShopee.DTO.User.OrderItemDTO;
 import com.CloneShopee.DTO.User.ShopItemDTO;
-import com.CloneShopee.models.Account;
+import com.CloneShopee.DTO.User.OrderResponse.OrderDTO;
+import com.CloneShopee.ResponeEntity.PageList;
 import com.CloneShopee.models.Order;
 import com.CloneShopee.models.OrderItem;
-import com.CloneShopee.models.ProductVariant;
-import com.CloneShopee.models.Promotion;
 import com.CloneShopee.models.PromotionItem;
 import com.CloneShopee.models.Shop;
 import com.CloneShopee.models.Status;
-import com.CloneShopee.models.VoucherBuyBack;
-import com.CloneShopee.models.VoucherCommon;
 import com.CloneShopee.models.VoucherLive;
 import com.CloneShopee.models.VoucherShop;
 import com.CloneShopee.models.VoucherShopAccount;
 import com.CloneShopee.repository.CartItemRepository;
 import com.CloneShopee.repository.OrderItemRepository;
 import com.CloneShopee.repository.OrderRepository;
+import com.CloneShopee.repository.ProductRepository;
 import com.CloneShopee.repository.PromotionItemRepository;
 import com.CloneShopee.repository.PromotionRepository;
 import com.CloneShopee.repository.VoucherRepository;
@@ -59,6 +57,37 @@ public class UserOrderService {
 
     @Autowired
     VoucherRepository voucherRepo;
+
+    public PageList searchOrder(String key, String keyType, Pageable page, Integer statusId) {
+        Boolean isSearch = null;
+        List<Integer> orderIds = null;
+        if (key != null && keyType != null) {
+            if ((keyType.equals("id") || keyType.equals("shopName"))) {
+                isSearch = true;
+            } else if (keyType.equals("productName")) {
+                orderIds = orderRepo.getOrderIdByProductName("%" + key + "%", shopBean.getAccount().getId());
+                if (orderIds.size() < 1) {
+                    return new PageList();
+                }
+            }
+        }
+
+        Page<OrderDTO> productList = orderRepo.userOrderSearch(isSearch, key, keyType, orderIds,
+                shopBean.getAccount().getId(),
+                page, statusId);
+        List<com.CloneShopee.DTO.User.OrderResponse.OrderItemDTO> items = orderRepo
+                .getOrderItemInListOrderIdsOfUser(productList.getContent().stream()
+                        .map(v -> v.getOrderId())
+                        .toList());
+
+        Map<Integer, List<com.CloneShopee.DTO.User.OrderResponse.OrderItemDTO>> groupedByOrderId = items.stream()
+                .collect(Collectors.groupingBy(com.CloneShopee.DTO.User.OrderResponse.OrderItemDTO::getOrderId));
+
+        productList.getContent().forEach(v -> v.setItems(groupedByOrderId.get(v.getOrderId())));
+        PageList pageList = new PageList(productList);
+
+        return pageList;
+    }
 
     public List<OrderItemDTO> generationOrderInListIds(List<Integer> ids, Integer accountId) {
         return cartItemRepo.getInfoCartForAddOrder(ids, accountId);
@@ -97,6 +126,7 @@ public class UserOrderService {
         }
         order.setTotalAmount(totalAmmount);
         checkVoucher(order, voucherId, shopItem.getVoucherStyle(), shopItem.getShopId(), items);
+        order.setNote(shopItem.getMessage());
         order.setShop(new Shop(shopItem.getShopId()));
         order.setAccount(shopBean.getAccount());
         orders.add(order);

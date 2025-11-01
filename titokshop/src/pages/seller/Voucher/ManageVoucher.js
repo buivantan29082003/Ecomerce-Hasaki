@@ -4,8 +4,11 @@ import { BiCopy, BiSearch } from "react-icons/bi";
 import api from "../../../config/AxiosConfig";
 import { statusColor } from "../../../config/StatusConfig";
 import Pagination from "../../../components/Base/Page";
-import { formatVND } from "../../../Service/FormatDate";
-
+import { formatVND } from "../../../Service/FormatDate"; 
+import { changeStatus } from "../../../Service/api/Seller/Voucher";
+import { toast } from "react-toastify";
+import HandleAlert from "../../../Service/HandleAlert";
+import PromoProgress from "../../../components/Base/ProgessTime";
 const ManageVoucher = () => {
   const [voucher, setVoucher] = useState({
     totalPage: 0,
@@ -89,16 +92,15 @@ const ManageVoucher = () => {
             </div>
           </div>
         </div>
-        <table className="min-w-full border-collapse m-2 rounded-md border border-gray-100 mt-3">
+        <table className="min-w-full border-collapse  rounded-md border border-gray-100 mt-3">
           {/* Header */}
           <thead>
             <tr className=" bg-gray-300 py-7 border border-gray-100  text-left text-sm font-medium text-gray-700">
               <th className="px-4 py-2 whitespace-nowrap">Promotion name</th>
               <th className="px-4 py-2 whitespace-nowrap">Status</th>
-              <th className="px-4 py-2 whitespace-nowrap">
-                Start time (GMT+8)
-              </th>
-              <th className="px-4 py-2 whitespace-nowrap">End time (GMT+8)</th>
+              <th className="px-4 py-2 whitespace-nowrap"> Start time </th>
+              <th className="px-4 py-2 whitespace-nowrap"> End time</th>
+              <th className="px-4 py-2 whitespace-nowrap">Progess</th>
               <th className="px-4 py-2 whitespace-nowrap">Type</th>
               <th className="bg-gray-300 p-4 border border-gray-100 px-4 py-2 whitespace-nowrap sticky right-0 bg-gray-50 shadow-md">
                 Action
@@ -107,11 +109,11 @@ const ManageVoucher = () => {
           </thead>
 
           {/* Body */}
-          <tbody className="font-medium">
+          <tbody className=" ">
             {voucher.content.map((item, idx) => (
               <tr key={idx} className="border-b text-gray-700 text-sm py-5">
                 <td className="px-4 py-2">
-                  <p>{item.voucherName}</p>
+                  <p className="font-semibold">{item.voucherName}</p>
                   <p className="flex gap-2 items-center mt-1 text-sm">
                     <span className={greenMain}>{item.voucherCode}</span>
                     <BiCopy size={13} color="gray" />
@@ -127,15 +129,24 @@ const ManageVoucher = () => {
                   </span>
                 </td>
                 <td className="px-4 py-2"> {item.startDate}</td>
-                <td className="px-4 py-2">{item.endDate}</td>
+                <td className="px-4 py-2"> {item.endDate}</td>
+                <td className="px-4 py-2"><PromoProgress promo={item} /></td>
                 <td className="px-4 py-2">
                   <p>{item.voucherStyle}</p>
                   <p>{item.voucherType}</p>
                 </td>
                 <td className="px-4 py-2 sticky right-0 bg-white shadow-md">
-                  <button className="border rounded px-3 py-1 text-sm font-medium hover:bg-gray-100">
-                    View ⌄
+                  <button className="text-[#00B3B0] font-semibold  cursor-pointer mb-2">
+                    Report
                   </button>
+                  {item.isEnded===false&&<div onClick={()=>{
+                    changeStatus(item.id,item.isActive===1?0:1).then(v=>{
+                      toast.success("Cập nhật thành công")
+                      getVoucher()
+                    }).catch(error=>{
+                      toast.error(HandleAlert(error).message)
+                    })
+                  }} className=" text-[#00B3B0] font-semibold  cursor-pointer">{item.isActive===1?"Ẩn":"Hiển thị"}</div>}
                 </td>
               </tr>
             ))}
@@ -184,10 +195,7 @@ const Overal = () => {
               <option value={30}>30 ngày qua</option>
               <option value={180}>6 tháng qua</option>
             </select>
-          </div>
-          <button className="text-teal-600 font-medium hover:underline">
-            Xem thêm →
-          </button>
+          </div> 
         </div>
       </div>
 
@@ -200,7 +208,7 @@ const Overal = () => {
             <span className="text-gray-400 cursor-pointer">?</span>
           </div>
           <div className="mt-2 text-xl font-semibold">
-            {data[0]} Số đơn hàng
+            <span className="text-orange-700 ">{data[0]}</span> Số đơn hàng
           </div>
         </div>
         <div className="  rounded-lg p-4">
@@ -210,7 +218,8 @@ const Overal = () => {
           </div>
           <div className="mt-2 text-xl font-semibold">
             {" "}
-            {formatVND(data[1])} tổng tiền đơn
+            <span className="text-orange-700 ">{formatVND(data[1])} {" "}</span>
+               tổng tiền đơn
           </div>
         </div>
         <div className={` hover:border-${greenMainColor} rounded-lg p-4`}>
@@ -219,7 +228,7 @@ const Overal = () => {
             <span className="text-gray-400 cursor-pointer">?</span>
           </div>
           <div className="mt-2 text-xl font-semibold">
-            {formatVND(data[2])} Tổng tiền giảm
+             <span className="text-orange-700 ">{formatVND(data[2])}</span> Tổng tiền giảm
           </div>
         </div>
         {/* Khách hàng */}
@@ -230,7 +239,7 @@ const Overal = () => {
           </div>
           <div className="mt-2 text-xl font-semibold">
             {" "}
-            {data[3]} khách hàng
+            <span className="text-orange-700 ">{data[3]}</span> khách hàng
           </div>
         </div>
       </div>

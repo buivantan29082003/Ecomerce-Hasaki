@@ -7,9 +7,18 @@ public class ShopItemDTO {
     private Integer shopId;
     private Integer voucherId;
     private String voucherStyle;
+    private String message;
 
     public Integer getShopId() {
         return shopId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public void setShopId(Integer shopId) {

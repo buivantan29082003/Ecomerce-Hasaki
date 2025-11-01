@@ -81,6 +81,7 @@ const Order = ({ isLive = false }) => {
     placeAnOrder(data)
       .then((v) => {
         toast.success("Đặt hàng thành công");
+        navigate("/user/dashboard/order")
       })
       .catch((error) => {
         toast.error(handleError(error).message);

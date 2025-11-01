@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.CloneShopee.Bean.ShopBean;
 import com.CloneShopee.DTO.User.PromotionInProductSearch;
 import com.CloneShopee.ExceptionGlobal.ConstraintException;
+import com.CloneShopee.ResponeEntity.BaseRespone;
 import com.CloneShopee.models.Product;
 import com.CloneShopee.models.ProductVariant;
 import com.CloneShopee.models.Promotion;
@@ -160,8 +161,9 @@ public class ProductService {
 			Integer product = productRepo.getIdProductByProductIdAndShopId(productId, shopId);
 			if (product != null) {
 				productRepo.updateStatusByProductId(productId, statusProduct.get(status));
+				return;
 			} else {
-				throw new ConstraintException("product", "Product not of shop !!!");
+				throw new RuntimeException("Có lỗi xảy ra");
 			}
 		}
 		throw new ConstraintException("status", "Status change is not valid !!!");

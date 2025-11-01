@@ -27,6 +27,15 @@ public class OrderItem {
 	@Min(value = 1, message = "Số lượng đặt hàng ít nhất 1 sản phẩm")
 	private Integer quantity;
 	private Double price;
+	private Double discountValue;
+
+	public Double getDiscountValue() {
+		return discountValue;
+	}
+
+	public void setDiscountValue(Double discountValue) {
+		this.discountValue = discountValue;
+	}
 
 	@Transient
 	private Integer productId;

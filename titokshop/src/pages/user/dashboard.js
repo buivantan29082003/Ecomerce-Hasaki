@@ -32,7 +32,7 @@ export default function DashBoard() {
 
       {/* Main content */}
       <main className="flex-1  ml-4 "> 
-        <div className="bg-white rounded-lg shadow-sm min-h-[300px] px-8 py-2 ">
+        <div className="  rounded-lg shadow-sm min-h-[300px] px-8 py-2 ">
           <Outlet/>
         </div>
       </main>
