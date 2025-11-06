@@ -14,6 +14,15 @@ function carts(state = initialStateCart, action) {
   }
 }
 
+function keySearch(state = "", action) {
+  switch (action.type) {
+    case "SET_KEY":
+      return action.data; // ví dụ: mảng sản phẩm
+    default:
+      return state; // luôn phải return state mặc định
+  }
+}
+
 // 👤 Reducer cho thông tin user
 function userInfo(state = initialStateUserInfo, action) {
   switch (action.type) {
@@ -29,4 +38,5 @@ function userInfo(state = initialStateUserInfo, action) {
 module.exports = {
   userInfo,
   carts,
+  keySearch
 };

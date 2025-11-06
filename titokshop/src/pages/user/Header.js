@@ -6,11 +6,11 @@ import HasakiLogo from "./HasakiLogo";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCartNoneGroup } from "../../Service/api/Cart";
-import CartPopup from "./PopupCart";
-
+import CartPopup from "./PopupCart"; 
 export default function Header() {
   const carts = useSelector((state) => state.carts);
-  const user = useSelector((state) => state.userInfo);
+  const user = useSelector((state) => state.userInfo); 
+  const [keySearch,setKeySearch]=useState("")
   const dispatch=useDispatch()
   useEffect(()=>{
     if(user!==null){
@@ -19,7 +19,7 @@ export default function Header() {
       }) 
     }  
   },[])
-
+  const navigate=useNavigate()
 
   const [isOpen, setIsOpen] = useState(false); 
   return (
@@ -32,23 +32,30 @@ export default function Header() {
         />
       </div> 
       <div className=" bg-[#306e51] p-3 text-white">
-        <div className="flex items-center justify-between px-4 md:px-10 py-3">
+        <div  className="flex cursor-pointer items-center justify-between px-4 md:px-10 py-3">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <HasakiLogo color={"white"} />
+          <div  onClick={()=>{navigate("/user/home")}} className="flex items-center space-x-2">
+            <HasakiLogo  color={"white"} />
             <span className="hidden md:block text-sm">
               Chất lượng thật - Giá trị thật
             </span>
           </div> 
           <div className="flex items-center bg-gray-100 rounded-full px-3 py-2 w-full max-w-xl">
             <input
-              type="text"
-              placeholder="Tìm sản phẩm, thương hiệu bạn mong muốn..."
+              type="text" 
+              value={keySearch}
+              onChange={e=>{
+                setKeySearch(e.target.value)
+              }}
+              placeholder="Tìm kiếm tên sản phẩm mà bạn mong muốn"
               className="flex-1 bg-transparent outline-none text-sm text-gray-700 placeholder-gray-400"
             />
-            <svg
+            <svg onClick={()=>{
+              dispatch({type:"SET_KEY",data:keySearch})
+              navigate("/common/product/search") 
+            }}
               xmlns="http://www.w3.org/2000/svg"
-              className="w-5 h-5 text-gray-500"
+              className="w-5 h-5 text-gray-500 cursor-pointer"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -63,7 +70,7 @@ export default function Header() {
           </div>
  
           <div className="flex items-center space-x-4 ">
-            <button className="hidden md:flex items-center space-x-1">
+            <button onClick={()=>{navigate("/user/dashboard/order")}} className="hidden md:flex items-center space-x-1">
               <BiUser size={20} />{" "}
               <span className="hidden lg:block">Đăng nhập</span>
             </button>

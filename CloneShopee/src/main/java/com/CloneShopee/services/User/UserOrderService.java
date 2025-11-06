@@ -1,6 +1,7 @@
 package com.CloneShopee.services.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,19 +19,21 @@ import com.CloneShopee.DTO.User.OrderResponse.OrderDTO;
 import com.CloneShopee.ResponeEntity.PageList;
 import com.CloneShopee.models.Order;
 import com.CloneShopee.models.OrderItem;
+import com.CloneShopee.models.Payment;
 import com.CloneShopee.models.PromotionItem;
 import com.CloneShopee.models.Shop;
 import com.CloneShopee.models.Status;
+import com.CloneShopee.models.Transaction;
 import com.CloneShopee.models.VoucherLive;
 import com.CloneShopee.models.VoucherShop;
 import com.CloneShopee.models.VoucherShopAccount;
 import com.CloneShopee.repository.CartItemRepository;
 import com.CloneShopee.repository.OrderItemRepository;
 import com.CloneShopee.repository.OrderRepository;
-import com.CloneShopee.repository.ProductRepository;
 import com.CloneShopee.repository.PromotionItemRepository;
 import com.CloneShopee.repository.PromotionRepository;
 import com.CloneShopee.repository.VoucherRepository;
+import com.CloneShopee.services.Common.PaymentVNPayService;
 
 @Service
 public class UserOrderService {
@@ -57,6 +60,22 @@ public class UserOrderService {
 
     @Autowired
     VoucherRepository voucherRepo;
+
+    @Autowired
+    PaymentVNPayService vnPayService;
+
+    private final Integer statusCancel = 9;
+    private final Integer paymentOnline = 3;
+
+    public Order getOrderByOrderIdAndAccountId(Integer orderId) {
+        return orderRepo.getOrderByOrderIdAndAccountId(orderId, shopBean.getAccount().getId());
+    }
+
+    public Order checkOrderIsValidToGenerateUrlPayment(Integer orderId) {
+
+        return orderRepo.checkOrderIsValidToGenerateUrlPayment(orderId, shopBean.getAccount().getId(), statusCancel,
+                paymentOnline).orElse(null);
+    }
 
     public PageList searchOrder(String key, String keyType, Pageable page, Integer statusId) {
         Boolean isSearch = null;
@@ -94,20 +113,23 @@ public class UserOrderService {
     }
 
     public void proccessOrder(ShopItemDTO shopItem, List<OrderItemDTO> items, Map<Integer, PromotionItem> promotions,
-            List<Order> orders, Status status, List<OrderItem> orderItems) {
+            List<Order> orders, Status status, List<OrderItem> orderItems, Payment payment, String address) {
         if (items == null) {
             throw new RuntimeException("Thông tin sản phẩm và của hàng không khớp");
         }
-        processOrder(shopItem.getVoucherId(), shopItem, items, promotions, orders, status, orderItems);
+        processOrder(shopItem.getVoucherId(), shopItem, items, promotions, orders, status, orderItems, payment,
+                address);
     }
 
     public void processOrder(Integer voucherId, ShopItemDTO shopItem, List<OrderItemDTO> items,
             Map<Integer, PromotionItem> promotions,
-            List<Order> orders, Status status, List<OrderItem> orderItems) {
+            List<Order> orders, Status status, List<OrderItem> orderItems, Payment p, String address) {
         Order order = new Order();
         order.setStatus(status);
+        order.setFullAddress(address);
+        order.setPayment(p);
+        order.setCreatedDate(new Date());
         order.setOrderItems(new ArrayList<>());
-        // OrderItem orderItem;
         Double totalAmmount = 0.0;
         PromotionItem promotionItem;
         for (OrderItemDTO item : items) {
@@ -192,9 +214,24 @@ public class UserOrderService {
 
     }
 
+    public Boolean refundOrder(Order order, Transaction tran) {
+        if (tran.getMethodCode().equals("VNPAY")) {
+            return (Boolean) vnPayService.refundOrder(order, tran);
+        }
+        return false;
+    }
+
     public void saveOrder(List<Order> orders, List<OrderItem> orderItems) {
         orderRepo.saveAll(orders);
         orderItemRepo.saveAll(orderItems);
+    }
+
+    public void updateStatusOrder(Integer orderId, Integer statusId) {
+        orderRepo.updateStatusOfOrder(orderId, statusId);
+    }
+
+    public void cancelOrder(Integer orderId, String reasonCancel) {
+        orderRepo.cancelOrder(orderId, 15, reasonCancel);
     }
 
     public Integer updateOrderQuantityUsed(Integer voucherId, Integer accountId, Integer quantityPer) {

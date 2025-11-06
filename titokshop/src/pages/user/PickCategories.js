@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { getAllCategories } from "../../Service/api/category";
 import { useNavigate } from "react-router-dom";
 
-export default function CategoryMenu() {
-  const url = "/common/product/search/";
+export default function CategoryMenu({url="/common/product/search?categoryId="}) {
+   
   const navigate=useNavigate()
   const [active, setActive] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -13,9 +13,9 @@ export default function CategoryMenu() {
     });
   }, []); 
   return (
-    <div className="flex relative bg-white border shadow-lg">
+    <div className="flex relative bg-white border shadow-lg text-sm">
       {/* Cột trái: danh mục cha */}
-      <div className="w-60 border-r">
+      <div className="w-60 border-r ">
         {categories.map((cat) => (
           <div
           onClick={()=>{

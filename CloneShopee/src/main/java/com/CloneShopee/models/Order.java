@@ -46,6 +46,14 @@ public class Order {
 		this.totalDiscountVoucher = totalDiscountVoucher;
 	}
 
+	public boolean isOrderCreatedWithin10Minutes() {
+		Date now = new Date();
+		long diffMillis = now.getTime() - this.getCreatedDate().getTime();
+		long diffMinutes = diffMillis / (60 * 1000);
+
+		return diffMinutes < 10;
+	}
+
 	@ManyToOne
 	@JoinColumn(name = "paymentId")
 	private Payment payment;

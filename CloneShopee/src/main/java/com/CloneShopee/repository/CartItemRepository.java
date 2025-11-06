@@ -15,6 +15,10 @@ import com.CloneShopee.models.CartItem;
 
 public interface CartItemRepository extends JpaRepository<CartItem, CartDetailId> {
 
+        @Modifying
+        @Query("delete CartItem p where p.product.id in :cartIds")
+        public void deleteCartInList(@Param("cartIds") List<Integer> cartIds);
+
         @Query("select p.quantity from CartItem p where p.product.id=:productId and p.account.id=:accountId")
         Integer getQuantityCartByProductId(@Param("productId") Integer productId,
                         @Param("accountId") Integer accountId);

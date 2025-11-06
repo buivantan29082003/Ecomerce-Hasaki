@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { getRouteCateGory } from "../../Service/api/category";
 import { FaChevronRight } from "react-icons/fa";
 import {
@@ -9,9 +9,13 @@ import {
 import ProductCard from "../../components/user/ProductCartLine";
 import { productSearch } from "../../Service/api/Product";
 import LoadingSkeleton from "../../components/Base/Loading";
+import CategoryMenu from "./PickCategories";
+import { BiMenu } from "react-icons/bi";
+import { useSelector } from "react-redux";
 const ProductSearch = () => {
-  const param = useParams();
+  const [searchParams] = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
+  const keySearch = useSelector((state) => state.keySearch);
   const [filter, setFilter] = useState({
     minPrice: null,
     maxPrice: null,
@@ -21,6 +25,13 @@ const ProductSearch = () => {
     currentCategory: null,
     currentPage: 0,
   });
+  useEffect(() => {
+     
+    let c = searchParams.get("categoryId");
+    if (c !== null) {
+      setCate(c);
+    }
+  }, [searchParams]);
   const [cate, setCate] = useState(null);
   const [data, setData] = useState({
     totalElements: 0,
@@ -30,9 +41,8 @@ const ProductSearch = () => {
     brands: null,
     properties: null,
   });
-
   useEffect(() => {
-    let c = param.categoryId;
+    let c = searchParams.get("categoryId");
     if (c !== undefined) {
       setCate(c);
     }
@@ -40,7 +50,7 @@ const ProductSearch = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    productSearch(filter)
+    productSearch(filter, keySearch)
       .then((v) => {
         setData((prev) => ({
           ...prev,
@@ -52,7 +62,7 @@ const ProductSearch = () => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [filter]);
+  }, [filter,keySearch]);
 
   useEffect(() => {
     if (cate != null) {
@@ -91,25 +101,16 @@ const ProductSearch = () => {
       ) : (
         <></>
       )}
-
-      {/* Main content */}
       <div className="flex flex-col md:flex-row   py-6  ">
-        {/* Sidebar */}
         <aside className="w-full md:w-1/4  border-right lg:w-1/6 bg-white rounded-sm shadow p-4">
           <Filter filter={filter} setFilter={setFilter} data={data} />
         </aside>
-
-        {/* Products section */}
         <main className="flex-1 bg-white px-2 py-2">
           <h2 className="text-md text-gray-800 font-bold mt-5 mb-3">
             TÌM THẤY <span className="text-red-600">{data.totalElements}</span>{" "}
             SẢN PHẨM TRÙNG KHỚP
           </h2>
-          {/* Tabs filter */}
           <TabSort filter={filter} setFilter={setFilter} />
-
-          {/* Grid sản phẩm */}
-
           {isLoading ? (
             <LoadingSkeleton isShow={isLoading} count={10} type="grid" />
           ) : (
@@ -138,6 +139,16 @@ const Filter = ({ data, setFilter, filter }) => {
   });
   return (
     <div>
+      <div className="relative group">
+        <button className="flex items-center space-x-2  py-1 text-green-700  rounded-t-md">
+          <BiMenu />
+          <span className="text-gray-800 font-bold">DANH MỤC</span>
+        </button>
+
+        <div className="absolute left-0 top-full hidden group-hover:block bg-white shadow-lg w-64 z-50">
+          <CategoryMenu />
+        </div>
+      </div>
       <h2 className="text-md text-gray-800 font-bold mt-4 mb-3">KHOẢNG GIÁ</h2>
 
       <div className="flex items-center gap-2 mb-3">
@@ -195,8 +206,6 @@ const Filter = ({ data, setFilter, filter }) => {
                   id={`brand-${idx}`}
                   className="peer hidden"
                 />
-
-                {/* Custom checkbox */}
                 <div className="w-5 h-5 border border-gray-400 rounded-sm flex items-center justify-center peer-checked:bg-green-700 peer-checked:border-green-700">
                   {/* Dấu tick */}
                   <svg
@@ -252,10 +261,7 @@ const Filter = ({ data, setFilter, filter }) => {
                         type="checkbox"
                         className="peer hidden"
                       />
-
-                      {/* Custom checkbox */}
                       <div className="w-5 h-5 border border-gray-400 rounded-sm flex items-center justify-center peer-checked:bg-green-700 peer-checked:border-green-700">
-                        {/* Dấu tick */}
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
@@ -347,7 +353,6 @@ const TabSort = ({ filter, setFilter }) => {
     </>
   );
 };
-
 const CateRoute = ({ cate }) => {
   const [route, setRoute] = useState(undefined);
 
@@ -365,7 +370,7 @@ const CateRoute = ({ cate }) => {
           Trang chủ
         </a>
         <FaChevronRight className="text-xs" />
-        {route != undefined &&
+        {route !== undefined &&
           route.map((v) => {
             return (
               <>

@@ -36,6 +36,11 @@
         <artifactId>mapstruct</artifactId>
         <version>1.5.5.Final</version>
     </dependency>
+	<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+
 
     <!-- Dependency cho MapStruct Processor (phải có để biên dịch) -->
     <dependency>

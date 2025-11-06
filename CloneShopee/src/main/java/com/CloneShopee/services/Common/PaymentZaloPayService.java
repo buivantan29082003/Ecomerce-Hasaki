@@ -1,6 +1,7 @@
 package com.CloneShopee.services.Common;
 
 import com.CloneShopee.models.Order;
+import com.CloneShopee.models.Transaction;
 import com.CloneShopee.services.ServiceInterface.PaymentService;
 
 public class PaymentZaloPayService implements PaymentService {
@@ -18,7 +19,7 @@ public class PaymentZaloPayService implements PaymentService {
     }
 
     @Override
-    public Object refundOrder(Order order) {
+    public Object refundOrder(Order order, Transaction transaction) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'refundOrder'");
     }

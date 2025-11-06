@@ -7,6 +7,7 @@ import UserAddress from "../pages/user/UserAddress";
 import AddAddressForm from "../pages/user/AddAddress";
 import ManageOrder from "../pages/user/ManageOrder";
 import ProductReport from "../pages/seller/ProductReport";
+import ManageAccount from "../pages/user/ManageAccount";
   
 // ✅ Lazy load toàn bộ page & layout
 const Loading = lazy(() => import("../pages/Base/Loading"));
@@ -78,6 +79,7 @@ export default function AppMain() {
             <Route path="address" element={<UserAddress />} />  
             <Route path="address/add" element={<AddAddressForm />} /> 
             <Route path="order" element={<ManageOrder />}></Route> 
+            <Route path="account" element={<ManageAccount />}></Route> 
           </Route>
         </Route>
 
@@ -85,7 +87,7 @@ export default function AppMain() {
           <Route path="/common" element={<CommonPage />}>
             <Route path="product/:productId" element={<ProductDetail />} />
             <Route
-              path="product/search/:categoryId"
+              path="product/search"
               element={<ProductSearch />}
             />
           </Route>

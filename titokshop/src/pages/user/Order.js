@@ -18,6 +18,7 @@ const Order = ({ isLive = false }) => {
     totalReduce: 0,
     totalPrice: 0,
   });
+  const [paymentType,setPaymentType]=useState("ONLINE")
 
   const [address, setAddress] = useState(null);
   const sumTotal = () => {
@@ -51,6 +52,7 @@ const Order = ({ isLive = false }) => {
         if (v.length < 1) {
           navigate("/user/cart");
         }
+
         setCarts(v);
       });
     } else {
@@ -63,6 +65,7 @@ const Order = ({ isLive = false }) => {
       cartItems: [],
       shops: [],
       address: null,
+      paymentType:paymentType
     };
     if (address !== null) {
       data.addressId = address.id;
@@ -100,6 +103,10 @@ const Order = ({ isLive = false }) => {
 
         <div className="md:w-10/12 w-full md:px-10 mt-2 mx-auto   ">
           <OrderForm isLive={isLive} setSumTotal={sumTotal} carts={carts} />
+        </div>
+        <div className="md:w-10/12 bg-white w-full md:px-10 mt-2 mx-auto justify-end py-4 flex gap-3">
+            <p onClick={()=>setPaymentType("ONLINE")} className={`px-3 cursor-pointer font-semibol border-gray-300 rounded md border-1 py-2 bg-white ${paymentType==="ONLINE"?"border border-orange-600 text-orange-600":""}`}>Thanh toán Online</p>
+            <p onClick={()=>setPaymentType("COD")}className={`px-3 cursor-pointer font-semibol border-gray-300 rounded md border-1 py-2 bg-white ${paymentType==="COD"?"border border-orange-600 text-orange-600":""}`}>Thanh toán khi nhận hàng</p>
         </div>
         <div
           className="sticky mt-2 bottom-0 bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] 

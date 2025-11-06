@@ -19,6 +19,14 @@ public class Payment {
 		return id;
 	}
 
+	public Payment() {
+
+	}
+
+	public Payment(Integer id) {
+		this.id = id;
+	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}

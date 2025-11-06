@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 import com.CloneShopee.DTO.User.CartInfoDTO;
 import com.CloneShopee.DTO.User.product.SaleDetail;
 import com.CloneShopee.models.CartItem;
-import com.CloneShopee.models.PromotionItem;
 import com.CloneShopee.repository.CartItemRepository;
 import com.CloneShopee.repository.ProductRepository;
-import com.CloneShopee.services.sale.ProductService;
 
 @Service
 public class CartItemService {
@@ -36,6 +34,10 @@ public class CartItemService {
 
     public void updateVariantCart(Integer productId1, Integer productIdChange, Integer accountId) {
         cartItemRepo.updateChangeVariantCart(productId1, accountId, productIdChange);
+    }
+
+    public void deleteCartInList(List<Integer> cartIds) {
+        cartItemRepo.deleteCartInList(cartIds);
     }
 
     public List<CartInfoDTO> getAllCart(Integer accountId) {

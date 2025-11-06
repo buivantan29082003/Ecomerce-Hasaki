@@ -20,12 +20,19 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     // (Integer id, Integer variantId, String variantName, Integer productId, String
     // productName,
     // Double price, Integer quantity, Double reducePrice)
+
+    @Query("select p from Order p where p.id=:orderId and p.account.id=:accountId and p.status.id=:statusWaitPayment and p.payment.id=:typePayment")
+    Optional<Order> checkOrderIsValidToGenerateUrlPayment(@Param("orderId") Integer orderId,
+            @Param("accountId") Integer accountId,
+            @Param("statusWaitPayment") Integer status, @Param("typePayment") Integer typePayment);
+
     @Query("select new com.CloneShopee.DTO.User.OrderResponse.OrderItemDTO(p.id,p.order.id,p.product.id,p.product.variantName,p.product.product.id,p.product.product.productName,p.price,p.quantity,p.discountValue,p.product.image)  from OrderItem p where p.order.id in:orderIds")
     List<com.CloneShopee.DTO.User.OrderResponse.OrderItemDTO> getOrderItemInListOrderIdsOfUser(
             @Param("orderIds") List<Integer> orderIds);
 
     @Query("select p.order.id from OrderItem p where p.order.account.id=:userId and  p.product.product.productName like :productName")
-    List<Integer> getOrderIdByProductName(@Param("productName") String productName, @Param("userId") Integer userId);
+    List<Integer> getOrderIdByProductName(@Param("productName") String productName,
+            @Param("userId") Integer userId);
 
     @Query("""
                 SELECT new com.CloneShopee.DTO.User.OrderResponse.OrderDTO(
@@ -37,7 +44,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
                     p.totalDiscountVoucher,
                     p.reasonCancel,
                     p.createdDate,
-                    p.fullAddress
+                    p.fullAddress,
+                    p.payment
                 )
                 FROM Order p
                 WHERE (:orderIds IS NULL OR p.id IN :orderIds)
@@ -82,6 +90,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("SELECT p.quantity as quantity, p.price as price,p.product.product.productName as productName,p.product.variantName as variantName, p.product.id as productVariantId,p.product.product.id as productId,p.product.image as productImage,p.order.id as orderId FROM OrderItem p")
     List<OrderItemDTO> getOrderItemsByOrderId(@Param("orderId") Integer orderId);
 
+    @Query("select p from Order p where p.id =:orderId and p.account.id=:accountId")
+    public Order getOrderByOrderIdAndAccountId(@Param("orderId") Integer orderId,
+            @Param("accountId") Integer accountId);
+
     @Query("SELECT p.id FROM Order p where p.id=:orderId and p.shop.id=:shopId")
     Optional<Integer> checkOrderOfShop(@Param("orderId") Integer orderId, @Param("shopId") Integer shopId);
 
@@ -99,6 +111,17 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     @Query("UPDATE Order p SET p.status.id=:statusId , p.tag=:tag where p.id IN:orderIds")
     void updateStatusAndTagOrders(@Param("orderIds") Set<Integer> orderIds, @Param("tag") String tag,
             @Param("statusId") Integer statusId);
+
+    @Modifying
+    @Query("UPDATE Order p SET p.status.id=:statusId  where p.id =:orderId")
+    void updateStatusOfOrder(@Param("orderId") Integer orderId,
+            @Param("statusId") Integer statusId);
+
+    @Modifying
+    @Query("UPDATE Order p SET p.status.id=:statusId,p.reasonCancel=:reason where p.id =:orderId")
+    void cancelOrder(@Param("orderId") Integer orderId,
+            @Param("statusId") Integer statusId,
+            @Param("reason") String reason);
 
     @Modifying
     @Query("UPDATE Order p SET p.status.id=:statusId , p.tag=:tag where p.id =:orderId")

@@ -3,6 +3,7 @@ package com.CloneShopee.DTO.User.OrderResponse;
 import java.util.Date;
 import java.util.List;
 
+import com.CloneShopee.models.Payment;
 import com.CloneShopee.models.Status;
 
 public class OrderDTO {
@@ -16,10 +17,20 @@ public class OrderDTO {
     private String reasonCancel;
     private Date createdDate;
     private String address;
+    private Payment payment;
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
+    }
+
     private List<OrderItemDTO> items;
 
     public OrderDTO(Integer orderId, Status status, Integer shopId, String shopName, Double totalFee,
-            Double totalDiscountVoucher, String reasonCancel, Date createdDate, String address) {
+            Double totalDiscountVoucher, String reasonCancel, Date createdDate, String address, Payment payment) {
         this.orderId = orderId;
         this.status = status;
         this.shopId = shopId;
@@ -29,6 +40,7 @@ public class OrderDTO {
         this.reasonCancel = reasonCancel;
         this.createdDate = createdDate;
         this.address = address;
+        this.payment = payment;
     }
 
     public OrderDTO() {
