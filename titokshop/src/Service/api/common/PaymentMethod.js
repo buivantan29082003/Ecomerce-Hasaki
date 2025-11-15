@@ -8,4 +8,6 @@ const getPaymentMethods=async ()=>{
     })
 }
 
+
+
 export default getPaymentMethods

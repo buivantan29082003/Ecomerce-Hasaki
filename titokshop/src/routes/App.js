@@ -8,6 +8,7 @@ import AddAddressForm from "../pages/user/AddAddress";
 import ManageOrder from "../pages/user/ManageOrder";
 import ProductReport from "../pages/seller/ProductReport";
 import ManageAccount from "../pages/user/ManageAccount";
+import ManageOrderSeller from "../pages/seller/ManageOrder/ManageOrder";
   
 // ✅ Lazy load toàn bộ page & layout
 const Loading = lazy(() => import("../pages/Base/Loading"));
@@ -59,6 +60,7 @@ export default function AppMain() {
               </RequireAuth>
             }
           >
+            <Route path="orders" element={<ManageOrderSeller/>}/>
             <Route path="products" element={<SellerProducts />} />
             <Route path="product/add" element={<AddProduct />} />
             <Route path="voucher/add/:type" element={<MainVoucher />} />

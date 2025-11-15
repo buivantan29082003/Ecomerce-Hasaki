@@ -1,10 +1,20 @@
 import { useState, useRef, useEffect } from "react";
 
-export default function CustomModal({ trigger, children, customeFunction,height=70, witdh=70 }) {
+export default function CustomModal({
+  trigger,
+  children,
+  customeFunction,
+  height = 70, // số %
+  witdh = 70,  // số %
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const overlayRef = useRef();
 
-  // Đóng khi nhấn phím Escape
+  // Convert number => vh/vw
+  const finalWidth = `${witdh}vw`;
+  const finalHeight = `${height}vh`;
+
+  // ESC close
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === "Escape") setIsOpen(false);
@@ -13,7 +23,7 @@ export default function CustomModal({ trigger, children, customeFunction,height=
     return () => document.removeEventListener("keydown", handleEsc);
   }, []);
 
-  // Đóng khi click ra ngoài
+  // Click outside
   const handleClickOutside = (e) => {
     if (e.target === overlayRef.current) {
       customeFunction?.();
@@ -23,24 +33,31 @@ export default function CustomModal({ trigger, children, customeFunction,height=
 
   return (
     <>
-      {/* Trigger mở modal */}
-      <div onClick={() => setIsOpen(true)} className="inline-block cursor-pointer">
+      <div onClick={() => setIsOpen(true)} className="  cursor-pointer">
         {trigger}
       </div>
 
-      {/* Overlay modal */}
       {isOpen && (
         <div
           ref={overlayRef}
           onClick={handleClickOutside}
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[1001010101] flex items-center justify-center"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[99999] 
+                     flex items-center justify-center"
         >
-          {/* Nội dung modal */}
           <div
-            className={`bg-white w-[${witdh}vw] h-[${height}vh] rounded-lg shadow-xl p-6 relative`}
-            style={{ zIndex: 10000 }}
+            className="
+              bg-white rounded-lg shadow-xl p-6 relative
+              overflow-y-auto overflow-x-hidden
+              scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200
+            "
+            style={{
+              width: finalWidth,
+              height: finalHeight,
+              maxWidth: "95vw",
+              maxHeight: "95vh",
+            }}
           >
-            {/* Nút đóng nhanh */}
+            {/* Close button */}
             <button
               onClick={() => setIsOpen(false)}
               className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"

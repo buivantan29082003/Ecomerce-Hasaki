@@ -6,14 +6,14 @@ import product, { changeStatusProduct } from "../../Service/api/Seller/product";
 import { toast } from "react-toastify";
 import LoadingSkeleton from "../../components/Base/Loading";
 import Pagination from "../../components/Base/Page";
- 
+
 export default function SellerProducts() {
   const [activeTab, setActiveTab] = useState(null);
   const tabs = [
     { name: "Tất cả 52", value: null },
     { name: "Đang hoạt động 12", value: 1 },
     { name: "Đã ẩn 22", value: 0 },
-    { name: "Đã xóa 12", value:2 },
+    { name: "Đã xóa 12", value: 2 },
   ];
   const [sampleProducts, setSampleProducts] = useState({
     content: [],
@@ -25,9 +25,9 @@ export default function SellerProducts() {
     status: null,
     categoriesId: null,
     isLive: false,
-    currentPage:0
+    currentPage: 0,
   });
-  const [isLoading,setIsLoading]=useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   function getAllIds(node) {
     let ids = [node.id]; // lấy id hiện tại
@@ -42,7 +42,7 @@ export default function SellerProducts() {
   const [cateString, setCatString] = useState("");
 
   const getProducts = () => {
-    setIsLoading(true)
+    setIsLoading(true);
     api
       .get(
         `/sale/product/findall?${
@@ -53,14 +53,17 @@ export default function SellerProducts() {
             : ""
         }&${filters.minPrice != null ? `minPrice=${filters.minPrice}` : ""}&${
           filters.maxPrice != null ? `maxPrice=${filters.maxPrice}` : ""
-        }&key=${filters.key}&isLive=${filters.isLive}&page=${filters.currentPage}`
+        }&key=${filters.key}&isLive=${filters.isLive}&page=${
+          filters.currentPage
+        }`
       )
       .then((v) => {
         setSampleProducts(v.data.data);
       })
-      .catch(() => {}).finally(()=>{
-        setIsLoading(false)
-      })
+      .catch(() => {})
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -101,7 +104,9 @@ export default function SellerProducts() {
 
       {/* Bộ lọc */}
       <div className="bg-white p-4 rounded border mb-6 shadow-sm">
-        <div className="flex flex-wrap gap-3 mb-3">
+        {/* Hàng filter */}
+        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mb-3 w-full">
+          {/* Ô tìm kiếm */}
           <input
             value={filters.key}
             onChange={(v) => {
@@ -110,13 +115,23 @@ export default function SellerProducts() {
             }}
             type="text"
             placeholder="Tìm kiếm tên sản phẩm, ID hoặc SKU người bán"
-            className="hover:border-[#009DA6] border rounded px-3 py-2 w-[280px] focus:outline-none focus:ring-1 focus:ring-[#009DA6]"
+            className="hover:border-[#009DA6] border rounded px-3 py-2 
+                 w-full sm:w-[280px] focus:outline-none focus:ring-1 focus:ring-[#009DA6]"
           />
-          <div className="relative inline-block group">
-            <div className="border border-[#009DA6] rounded px-4 py-2 w-[120px] text-center text-gray-700 cursor-pointer">
+
+          {/* Dropdown giá */}
+          <div className="relative inline-block group w-full sm:w-auto">
+            <div
+              className="border border-[#009DA6] rounded px-4 py-2 
+                      w-full sm:w-[120px] text-center text-gray-700 cursor-pointer"
+            >
               Giá
             </div>
-            <div className="absolute left-0 top-full w-72 bg-white border border-gray-200 rounded-lg shadow-md p-4 z-50 hidden group-hover:block">
+
+            <div
+              className="absolute left-0 top-full w-72 bg-white border border-gray-200 
+                      rounded-lg shadow-md p-4 z-50 hidden group-hover:block"
+            >
               <input
                 value={filters.minPrice}
                 onChange={(v) => {
@@ -125,7 +140,8 @@ export default function SellerProducts() {
                 }}
                 type="number"
                 placeholder="Giá tối thiểu"
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-3 focus:outline-none focus:border-[#009DA6]"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm mb-3 
+                     focus:outline-none focus:border-[#009DA6]"
               />
               <div className="h-px bg-gray-200 my-2"></div>
               <input
@@ -136,37 +152,40 @@ export default function SellerProducts() {
                 }}
                 type="number"
                 placeholder="Giá tối đa"
-                className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-[#009DA6]"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm 
+                     focus:outline-none focus:border-[#009DA6]"
               />
             </div>
           </div>
 
-          <CustomModal
-            trigger={
-              <input
-                type="text"
-                placeholder="Hạng mục"
-                value={cateString}
-                className="hover:border-[#009DA6] border rounded px-3 py-2 w-full focus:outline-none focus:ring-1 focus:ring-[#009DA6] inline-block"
+          {/* Hạng mục */}
+          <div className="w-full sm:w-auto">
+            <CustomModal witdh={700} height={700}
+              trigger={
+                <input
+                  type="text"
+                  placeholder="Hạng mục"
+                  value={cateString}
+                  className="hover:border-[#009DA6] border rounded px-3 py-2 
+                        focus:outline-none focus:ring-1 focus:ring-[#009DA6] inline-block w-full sm:w-auto"
+                />
+              }
+            >
+              <CategorySelector
+                setIfEnd={false}
+                setCategory={(cat) => {
+                  filters.categoriesId = getAllIds(cat);
+                  getProducts();
+                }}
+                setCategoryList={setCatString}
               />
-            }
-          >
-            <CategorySelector
-              setIfEnd={false}
-              setCategory={(cat) => {
-                filters.categoriesId = getAllIds(cat);
-                getProducts();
-              }}
-              setCategoryList={setCatString}
-            />
-          </CustomModal>
+            </CustomModal>
+          </div>
+ 
 
-          <button className="border rounded px-4 py-2 bg-white hover:bg-gray-50 text-gray-700">
-            Xem thêm bộ lọc
-          </button>
+          {/* Đặt lại */}
           <button
-            onClick={() =>
-            {
+            onClick={() => {
               setFilters({
                 key: "",
                 minPrice: null,
@@ -174,16 +193,18 @@ export default function SellerProducts() {
                 status: null,
                 categoriesId: null,
                 isLive: false,
-              })
-              getProducts()
-            }
-            }
-            className="border rounded px-4 py-2 text-gray-700 hover:bg-gray-100"
+              });
+              getProducts();
+            }}
+            className="border rounded px-4 py-2 text-gray-700 hover:bg-gray-100 
+                 w-full sm:w-auto"
           >
             Đặt lại
           </button>
         </div>
-        <div className="flex gap-2 items-center mt-2">
+
+        {/* Đã chọn */}
+        <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center mt-2">
           <span className="text-gray-800 mr-2 font-sans font-medium">
             Đã chọn: 1/2
           </span>
@@ -197,39 +218,51 @@ export default function SellerProducts() {
             Đang live {filters.isLive === true ? "(Đã chọn)" : ""}
           </button>
         </div>
-      </div> 
-      <div className="grid grid-cols-[40px_1.8fr_1fr_1fr_1fr_1.2fr_1fr_1fr] bg-gray-50 font-medium text-gray-800 border-b">
-        <div className="flex justify-center items-center py-2">
-          <input type="checkbox" />
-        </div>
-        <div className="py-2">Product</div>
-        <div className="py-2 text-right">Quantity</div>
-        <div className="py-2 text-right">Retail Price</div>
-        <div className="py-2 text-right">Ưu đãi</div>
-        <div className="py-2 text-center">Status</div>
-        <div className="py-2 text-right">Action</div>
       </div>
-      <LoadingSkeleton isShow={isLoading } type="horizontal"/>
-      {sampleProducts.content.map((v) => (
-        <ProductItem getProduct={getProducts} key={v.id} product={v} />
-      ))}
+
+      <LoadingSkeleton isShow={isLoading} type="horizontal" />
+      {/* Wrapper scroll */}
+      <div className="max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+        <div className="min-w-[900px]">
+          {/* Header */}
+          <div className="grid grid-cols-[40px_1.8fr_1fr_1fr_1fr_1.2fr_1fr_1fr] bg-gray-50 font-medium text-gray-800 border-b">
+            <div className="flex justify-center items-center py-2">
+              <input type="checkbox" />
+            </div>
+            <div className="py-2">Product</div>
+            <div className="py-2 text-right">Quantity</div>
+            <div className="py-2 text-right">Retail Price</div>
+            <div className="py-2 text-right">Ưu đãi</div>
+            <div className="py-2 text-center">Status</div>
+            <div className="py-2 text-right">Action</div>
+          </div>
+
+          {/* Content */}
+          <div>
+            {sampleProducts.content.map((v) => (
+              <ProductItem getProduct={getProducts} key={v.id} product={v} />
+            ))}
+          </div>
+        </div>
+      </div>
+
       <Pagination
-                currentPage={filters.currentPage+1}
-                onPageChange={(p) => {
-                  if((p-1)!==filters.currentPage){
-                    filters.currentPage = p-1;
-                  getProducts()
-                  }
-                }}
-                totalPages={product.totalPages}
-              />
+        currentPage={filters.currentPage + 1}
+        onPageChange={(p) => {
+          if (p - 1 !== filters.currentPage) {
+            filters.currentPage = p - 1;
+            getProducts();
+          }
+        }}
+        totalPages={product.totalPages}
+      />
     </div>
   );
 }
 
-function ProductItem({ product,getProduct }) {
+function ProductItem({ product, getProduct }) {
   return (
-    <div className="grid grid-cols-[40px_1.8fr_1fr_1fr_1fr_1.2fr_1fr_1fr] border-b bg-white hover:bg-gray-50 transition text-gray-800">
+    <div className="grid grid-cols-[40px_1.8fr_1fr_1fr_1fr_1.2fr_1fr_1fr] border-b bg-white hover:bg-gray-50 transition text-gray-800 min-w-0">
       {/* Checkbox */}
       <div className="flex justify-center items-center py-3">
         <input type="checkbox" />
@@ -277,31 +310,54 @@ function ProductItem({ product,getProduct }) {
               : "bg-red-100 text-red-600"
           }`}
         >
-          {product.status === 1 ? "Active" :product.status === 2 ? "Delete" : "Hidden"}
+          {product.status === 1
+            ? "Active"
+            : product.status === 2
+            ? "Delete"
+            : "Hidden"}
         </span>
       </div>
 
       {/* Action */}
       <div className="py-3 text-right font-bold space-y-1 text-[#00B3B0]">
-        {product.status!==2&&<>
-        <div className="hover:underline cursor-pointer">Edit</div>
-        <div onClick={()=>changeStatusProduct(product.id,"DELETE").then(v=>{
-          toast.success("Cập nhật thành công")
-          getProduct();
-        }).catch(error=>{
-          toast.error("Cập nhật không thành công, vui lòng thử lại")
-        })} className="hover:underline cursor-pointer">Delete</div>
-        <div onClick={()=>{
-          changeStatusProduct(product.id,product.status === 1 ? "HIDDEN" : "ACTIVE").then(v=>{
-          toast.success("Cập nhật thành công")
-          getProduct();
-        }).catch(error=>{
-          toast.error("Cập nhật không thành công, vui lòng thử lại")
-        })
-        }} className="hover:underline cursor-pointer">
-          {product.status === 1 ? "Deactivate" : "Activate"}
-        </div>
-        </>} 
+        {product.status !== 2 && (
+          <>
+            <div className="hover:underline cursor-pointer">Edit</div>
+            <div
+              onClick={() =>
+                changeStatusProduct(product.id, "DELETE")
+                  .then((v) => {
+                    toast.success("Cập nhật thành công");
+                    getProduct();
+                  })
+                  .catch((error) => {
+                    toast.error("Cập nhật không thành công, vui lòng thử lại");
+                  })
+              }
+              className="hover:underline cursor-pointer"
+            >
+              Delete
+            </div>
+            <div
+              onClick={() => {
+                changeStatusProduct(
+                  product.id,
+                  product.status === 1 ? "HIDDEN" : "ACTIVE"
+                )
+                  .then((v) => {
+                    toast.success("Cập nhật thành công");
+                    getProduct();
+                  })
+                  .catch((error) => {
+                    toast.error("Cập nhật không thành công, vui lòng thử lại");
+                  });
+              }}
+              className="hover:underline cursor-pointer"
+            >
+              {product.status === 1 ? "Deactivate" : "Activate"}
+            </div>
+          </>
+        )}
         <div className="hover:underline cursor-pointer">View</div>
       </div>
     </div>

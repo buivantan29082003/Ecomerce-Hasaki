@@ -78,6 +78,7 @@ public class UserOrderService {
     }
 
     public PageList searchOrder(String key, String keyType, Pageable page, Integer statusId) {
+
         Boolean isSearch = null;
         List<Integer> orderIds = null;
         if (key != null && keyType != null) {
@@ -90,8 +91,7 @@ public class UserOrderService {
                 }
             }
         }
-
-        Page<OrderDTO> productList = orderRepo.userOrderSearch(isSearch, key, keyType, orderIds,
+        Page<OrderDTO> productList = orderRepo.userOrderSearchByUser(isSearch, key, keyType, orderIds,
                 shopBean.getAccount().getId(),
                 page, statusId);
         List<com.CloneShopee.DTO.User.OrderResponse.OrderItemDTO> items = orderRepo
