@@ -88,12 +88,21 @@ It allows users to place orders, manage orders, carts, search, manage accounts, 
 ![alt](https://github.com/buivantan29082003/Ecomerce-Hasaki/blob/main/ChoosingPaymentMethos.png)
 ![alt](https://github.com/buivantan29082003/Ecomerce-Hasaki/blob/main/PaymentPage.png)
 
+### And others pages.
+
+
 ### 👤 SHOPER – 
 ### Product Management
 ![alt](https://github.com/buivantan29082003/Ecomerce-Hasaki/blob/05924bc99b859ffa508828f4f2e4b28d5a6673bd/manage_product.png)
 
-### Shopper – Promotion
+###  Promotion
 ![alt](https://github.com/buivantan29082003/Ecomerce-Hasaki/blob/05924bc99b859ffa508828f4f2e4b28d5a6673bd/manage_promotion.png)
 
 ### Manage Voucher
 ![alt](https://github.com/buivantan29082003/Ecomerce-Hasaki/blob/05924bc99b859ffa508828f4f2e4b28d5a6673bd/mana_voucher.png)
+
+### Manage Order
+![alt](https://github.com/buivantan29082003/Ecomerce-Hasaki/blob/main/ManageOrderSaler.png)
+
+### And others pages.
+
