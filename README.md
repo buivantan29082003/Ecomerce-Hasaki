@@ -106,3 +106,7 @@ It allows users to place orders, manage orders, carts, search, manage accounts, 
 
 ### And others pages.
 
+📫 Contact
+Author: Van Tan Email: buivantan29082003@gmail.com.
+GitHub: github.com/buivantan29082003
+
