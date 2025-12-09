@@ -61,10 +61,10 @@ It allows users to place orders, manage orders, carts, search, manage accounts, 
 ---
 
 ## 🛠️ **Tech Stack**
-**Backend API:** Java Spring Framework  
-**ORM:** Spring Data JPA  
-**Database:** MySQL  
-**Frontend:** ReactJS, TailwindCSS, Redux  
+**Backend API:** Java Spring Framework(Spring boot, Spring Security).
+**ORM:** Spring Data JPA.  
+**Database:** MySQL.
+**Frontend:** ReactJS, TailwindCSS, Redux.
 
 ---
 
